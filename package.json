@@ -9,7 +9,7 @@
   "dependencies": {
     "react": "16.4.1",
     "react-native": "0.56.1",
-    "react-native-track-player": "github:react-native-kit/react-native-track-player#dev"
+    "react-native-track-player": "robertblackwell/react-native-track-player#dev"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",

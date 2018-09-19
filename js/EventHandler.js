@@ -13,8 +13,13 @@ import {
 } from 'react-native';
 
 
-const TrackPlayer = NativeModules.TrackPlayerModule
-const emitter = new NativeEventEmitter(TrackPlayer);
+// const TrackPlayer = NativeModules.TrackPlayerModule
+
+// import TrackPlayer from "react-native-track-player"
+// import TrackPlayer from "./track_player"
+import TrackPlayer from "react-native-track-player"
+
+// const emitter = new NativeEventEmitter(TrackPlayer);
 
 
 export default class EventHandlerClass
@@ -27,19 +32,20 @@ export default class EventHandlerClass
 	}
 	registerForEvents(handler)
 	{
-		const events = [
-			'playback-state', 'playback-error', 'playback-queue-ended', 'playback-track-changed',
+		TrackPlayer.registerEventHandler(this.handler)
+// 		const events = [
+// 			'playback-state', 'playback-error', 'playback-queue-ended', 'playback-track-changed',
 // /* NOTE new one */			'playback-seek-complete',
-			'remote-play','remote-pause','remote-stop','remote-next','remote-previous','remote-jump-forward','remote-jump-backward',
-		];
+// 			'remote-play','remote-pause','remote-stop','remote-next','remote-previous','remote-jump-forward','remote-jump-backward',
+// 		];
 
-		for (let i = 0; i < events.length; i++) {
-			emitter.addListener(events[i], (data) => {
-				let ev = events[i];
-				let ev_data = {	type : ev,	data: data}
-				handler(ev_data)
-			});
-		}
+// 		for (let i = 0; i < events.length; i++) {
+// 			emitter.addListener(events[i], (data) => {
+// 				let ev = events[i];
+// 				let ev_data = {	type : ev,	data: data}
+// 				handler(ev_data)
+// 			});
+// 		}
 	}
 	handler(data)
 	{
@@ -47,28 +53,25 @@ export default class EventHandlerClass
 		console.log(["handler", data])
 		if (data.type === 'playback-state') 
 		{
-			let s = data.data.state
+			let s = data.state
 			this.component.setState((prevState) => {
 				return {player_state : s}
 			})
-			console.log(`player state changed to ${s}`)
+			console.log(["EventHandler: ",`player state changed to ${s}`])
 		} 
 		else if (data.type === 'playback-seek-complete') 
 		{
 			let s = "seek complete"
-			this.component.setState((prevState) => {
-				return {player_state : s}
-			})
-			console.log(`player state changed to ${s}`)
+			console.log(["EventHandler:",`seek complete`])
 		} 
 		else if(data.type == 'playback-error') 
 		{
-			console.log("state playback error")
+			console.log(["EventHandler:","state playback error"])
 			throw new Error("got a playback error")
 		} 
 		else if(data.type == 'playback-queue-ended') 
 		{
-			console.log("state queue ended")
+			console.log(["EventHandler: ","state queue ended"])
 		} 
 		else if(data.type == 'playback-track-changed') 
 		{
@@ -76,12 +79,12 @@ export default class EventHandlerClass
 			// note the comment under add track
 			//
 			let newTrack = TrackPlayer.getCurrentTrack().then( (id) =>{
-				console.log(`new track is ${id}`)
+				console.log(["EventHandler",`new track is ${id}`])
 				this.component.setState( (prevState) => {
 					return {current_track: id}
 				})
 			})
-			console.log("state track changed")
+			console.log(["EventHandler","state track changed"])
 		} 
 		else if(data.type == 'remote-play') 
 		{ /* TrackPlayer.play()*/	}
